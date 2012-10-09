@@ -69,34 +69,35 @@ def enter_interactive_usermanager():
 
     if um.get_user_number() == 0:
         choice = raw_input('No user conf file found, creat a new one?\n<Y/N>: ')
-        if choice == 'y' or choice == 'Y': 
+        if choice == 'y' or choice == 'Y':
             login_info = prompt_user_info()
             um.add_user(login_info)
-        else: 
+        else:
             exit(-1)
-    
+
     # user has been created or already have users
-    users_info = um.get_all_users_info()
-
-    print '0 - add a new user'
-    for i, user_info in enumerate(users_info):
-        print '%d - %s(%s)' %(i + 1, user_info['username'], user_info['ethernet_interface'])
-
     while True:
+        users_info = um.get_all_users_info()
+
+        print '0 - add a new user'
+        for i, user_info in enumerate(users_info):
+            print '%d - %s(%s)' %(i + 1, user_info['username'], user_info['ethernet_interface'])
+
         try:
             choice = int(raw_input('Your choice: '))
         except ValueError:
             print 'Please input a valid number!'
-        else: break;
-    if choice == 0:
-        try:
-            user_info = prompt_user_info()
-            um.add_user(user_info)
-        except ConfigParser.DuplicateSectionError:
-            print 'User already exist!'
-            exit(-1)
-    else: 
-        return users_info[choice - 1]
+            continue
+
+        if choice == 0:
+            try:
+                user_info = prompt_user_info()
+                um.add_user(user_info)
+            except ConfigParser.DuplicateSectionError:
+                print 'User already exist!'
+                exit(-1)
+        else:
+            return users_info[choice - 1]
 
 def start_yah3c(login_info):
     yah3c = eapauth.EAPAuth(login_info)
